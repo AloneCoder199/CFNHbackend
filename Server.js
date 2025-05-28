@@ -15,7 +15,23 @@ app.use(express.json());
 app.use('/webhook', bodyParser.raw({ type: 'application/json' }));
 
 // ✅ Enable CORS for frontend
-app.use(cors({ origin: process.env.CLIENT_URL }));
+// app.use(cors({ origin: process.env.CLIENT_URL }));
+const allowedOrigins = [
+  'http://localhost:5173',                 // local dev frontend
+  'https://compassionfornature.netlify.app'  // deployed frontend
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if(!origin) return callback(null, true);  // for Postman or mobile apps
+
+    if(allowedOrigins.indexOf(origin) === -1) {
+      const msg = `CORS policy does not allow access from origin: ${origin}`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 // ✅ Route: Create Stripe Checkout Session
 app.post('/create-checkout-session', async (req, res) => {
