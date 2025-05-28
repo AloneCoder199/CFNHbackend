@@ -1,0 +1,8 @@
+.env
+packege-lock.json
+node_modules/
+dist/
+coverage/
+.vscode/
+# Logs
+logs
